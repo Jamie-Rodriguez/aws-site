@@ -1,0 +1,115 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Provisions resources required for a static website
+
+Parameters:
+  domain:
+    Type: String
+    Description: Purchased domain, will be used to name bucket also
+  otherDomain:
+    Type: String
+    Description: I also bought a second domain, point it to the same CloudFront distribution
+  sslCertArn:
+    Type: String
+    Description: ARN of ACM-generated certificate. Should be passed in from when this file is deployed as a Stack Set
+
+Resources:
+  siteBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref domain
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      WebsiteConfiguration:
+        IndexDocument: index.html
+
+  siteCfOai:
+    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+    Properties:
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: !Sub access-identity-${siteBucket}
+
+  siteBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref siteBucket
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action:
+              - s3:GetObject
+            Effect: Allow
+            Resource:
+              - !Sub arn:aws:s3:::${siteBucket}/*
+            Principal:
+              CanonicalUser: !GetAtt siteCfOai.S3CanonicalUserId
+
+  siteCloudFront:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Aliases:
+          - !Ref domain
+          - !Ref otherDomain
+        Comment: CloudFront distribution pointing to static site bucket
+        DefaultCacheBehavior:
+          AllowedMethods:
+            - GET
+            - HEAD
+          CachedMethods:
+            - GET
+            - HEAD
+          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6 # CachingOptimized
+          Compress: true
+          TargetOriginId: myOrigin
+          ViewerProtocolPolicy: allow-all
+        DefaultRootObject: index.html
+        Enabled: true
+        HttpVersion: http2
+        IPV6Enabled: true
+        Origins:
+          - DomainName: !GetAtt siteBucket.RegionalDomainName
+            Id: myOrigin
+            S3OriginConfig:
+              OriginAccessIdentity: !Sub origin-access-identity/cloudfront/${siteCfOai}
+        PriceClass: PriceClass_100
+        ViewerCertificate:
+          AcmCertificateArn: !Ref sslCertArn
+          MinimumProtocolVersion: TLSv1
+          SslSupportMethod: sni-only
+
+  route53Dns:
+    Type: AWS::Route53::RecordSetGroup
+    Properties:
+      HostedZoneName: !Sub ${domain}.
+      RecordSets:
+        - Name: !Ref domain
+          Type: A
+          AliasTarget:
+            # This is always the hosted zone ID when you create an alias record that routes traffic to a CloudFront distribution.
+            # See https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-route53-aliastarget-1.html#cfn-route53-aliastarget-hostedzoneid
+            HostedZoneId: Z2FDTNDATAQYW2
+            DNSName: !GetAtt siteCloudFront.DomainName
+        - Name: !Ref domain
+          Type: AAAA
+          AliasTarget:
+            HostedZoneId: Z2FDTNDATAQYW2
+            DNSName: !GetAtt siteCloudFront.DomainName
+
+  otherRoute53Dns:
+    Type: AWS::Route53::RecordSetGroup
+    Properties:
+      HostedZoneName: !Sub ${otherDomain}.
+      RecordSets:
+        - Name: !Ref otherDomain
+          Type: A
+          AliasTarget:
+            HostedZoneId: Z2FDTNDATAQYW2
+            DNSName: !GetAtt siteCloudFront.DomainName
+        - Name: !Ref otherDomain
+          Type: AAAA
+          AliasTarget:
+            HostedZoneId: Z2FDTNDATAQYW2
+            DNSName: !GetAtt siteCloudFront.DomainName

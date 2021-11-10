@@ -1,0 +1,96 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Provisions the resources required to use Stack Sets - IAM roles and S3 bucket containing CloudFormation template(s)
+
+Parameters:
+  stacksetBucketName:
+    Type: String
+    Description: S3 bucket in which to place the CloudFormation template that will be read from to provision the Stack Set
+  administratorAccountId:
+    Type: String
+    Description: AWS Account ID of the administrator account (the account in which StackSets will be created in)
+
+# Place both the administration and execution roles inside the same account as I don't use multiple accounts
+Resources:
+  stacksetBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref stacksetBucketName
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+  stacksetBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref stacksetBucket
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action:
+              - s3:PutObject
+              - s3:GetObject
+            Effect: Allow
+            Resource:
+              - !Sub arn:aws:s3:::${stacksetBucket}/*
+            Principal:
+              AWS: !Ref administratorAccountId
+
+  administrationRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: AWSCloudFormationStackSetAdministrationRole
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: cloudformation.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: /
+      Policies:
+        - PolicyName: AssumeRole-AWSCloudFormationStackSetExecutionRole
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - sts:AssumeRole
+                Resource:
+                  - "arn:*:iam::*:role/AWSCloudFormationStackSetExecutionRole"
+
+  executionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: AWSCloudFormationStackSetExecutionRole
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS:
+                - !Ref administratorAccountId
+            Action:
+              - sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/AdministratorAccess
+      Policies:
+        - PolicyName: AWSCloudFormationStackSetExecutionRolePolicy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action: "cloudformation:*"
+                Resource: "*"
+              - Effect: Allow
+                Action: "s3:*"
+                Resource: "*"
+              - Effect: Allow
+                Action: "cloudfront:*"
+                Resource: "*"
+              - Effect: Allow
+                Action: "route53:*"
+                Resource: "*"

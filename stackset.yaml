@@ -1,0 +1,57 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Provisions resources required for a static website
+
+Parameters:
+  stacksetName:
+    Type: String
+  administratorAccountId:
+    Type: String
+    Description: The names of the AWS account to deploy stack set updates to
+  domain:
+    Type: String
+    Description: Purchased domain, will be used to create a S3 bucket with that name also
+  domainHostedZoneId:
+    # Required in order to create a SSL certificate, I don't think there is a way to dynamically look this up in CloudFormation
+    Type: String
+    Description: Hosted Zone ID for purchased domain
+  otherDomain:
+    Type: String
+    Description: I also bought a second domain, point it to the same CloudFront distribution
+  stacksetBucketName:
+    Type: String
+    Description: Name of the S3 bucket where CloudFormation template is stored. Will be read to create the website resources
+  websiteCfFile:
+    Type: String
+    Description: The name of the CloudFormation template file that will be read to provision the website resources
+
+Resources:
+  sslCert:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: !Ref domain
+      DomainValidationOptions:
+        - DomainName: !Ref domain
+          HostedZoneId: !Ref domainHostedZoneId
+      SubjectAlternativeNames:
+        - !Ref otherDomain
+      ValidationMethod: DNS
+
+  websiteStackset:
+    Type: AWS::CloudFormation::StackSet
+    Properties:
+      Parameters:
+        - ParameterKey: domain
+          ParameterValue: !Ref domain
+        - ParameterKey: otherDomain
+          ParameterValue: !Ref otherDomain
+        - ParameterKey: sslCertArn
+          ParameterValue: !Ref sslCert
+      PermissionModel: SELF_MANAGED
+      StackInstancesGroup:
+        - DeploymentTargets:
+            Accounts:
+              - !Ref administratorAccountId
+          Regions:
+            - eu-west-3
+      StackSetName: !Ref stacksetName
+      TemplateURL: !Sub https://s3.eu-west-3.amazonaws.com/${stacksetBucketName}/${websiteCfFile}
