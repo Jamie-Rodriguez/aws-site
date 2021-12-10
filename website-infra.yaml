@@ -46,6 +46,29 @@ Resources:
             Principal:
               CanonicalUser: !GetAtt siteCfOai.S3CanonicalUserId
 
+  urlRedirectFunction:
+    Type: AWS::CloudFront::Function
+    Properties:
+      AutoPublish: true
+      FunctionCode: |
+        function handler(event) {
+            // If requesting root, don't modify request URI
+            // CloudFront will automatically redirect it to Default Root Object
+            var suffix = event.request.uri === '/'
+                || event.request.uri.includes('.html')
+                || event.request.uri.includes('.css')
+                || event.request.uri.includes('.js')
+                ? ''
+                : '.html';
+
+            event.request.uri = event.request.uri + suffix;
+            return event.request;
+        }
+      FunctionConfig:
+        Comment: Redirects URLs to the correct HTML resource in S3 i.e. /contact -> /contact.html
+        Runtime: cloudfront-js-1.0
+      Name: urlRedirectFunction
+
   siteCloudFront:
     Type: AWS::CloudFront::Distribution
     Properties:
@@ -63,6 +86,9 @@ Resources:
             - HEAD
           CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6 # CachingOptimized
           Compress: true
+          FunctionAssociations:
+            - EventType: viewer-request
+              FunctionARN: !Ref urlRedirectFunction
           TargetOriginId: myOrigin
           ViewerProtocolPolicy: allow-all
         DefaultRootObject: home.html

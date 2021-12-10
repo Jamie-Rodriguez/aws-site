@@ -4,6 +4,7 @@ set -euo pipefail
 source env.sh
 
 echo "Deploying site stack $SITE_STACK_NAME"
+echo "WARNING: May take a while!"
 aws --region us-east-1 cloudformation deploy \
     --template-file $STACKSET_CF_FILE \
     --stack-name $SITE_STACK_NAME \
