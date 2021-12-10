@@ -13,29 +13,38 @@ The CloudFormation templates are supplied their parameters from the JSON file `.
 *Note*: At time of writing CloudFormation external parameters are only supported in JSON format. See https://github.com/aws/aws-cli/issues/2275 for the status of this feature request.
 
 ## Problems
+### ACM SSL Certificate Region
 A hard requirement of AWS is that ACM certificates for CloudFront distributions be created in `us-east-1`. As I want to deploy all my resources (except the certificate) to `eu-west-3`, this presents a problem as a CloudFormation Stack is not capable of multi-region deployment of resources. Because of this, we are forced to use *CloudFormation StackSets*.
+
+### Using URL Paths Without `.html` Extension
+In order to use URL paths *without* the `.html` extension e.g. `https://website.com/about`, instead of *only* being able to use `https://website.com/about.html` by default; I use a *CloudFront Function* to map the "*clean*" URLs to the corresponding `.html` file stored in S3. As this happens all within Amazon's network, the client does not see any of this indirection and to them, it "just works".
 
 ## Infrastructure Generated
 The CloudFormation template `stackset.yaml` generates the following infrastructure stack as below:
 ```text
-     eu-west-3         us-east-1
-  +--------------+  +--------------+
-  | Route 53 DNS |  | ACM SSL cert |
-  +------+-------+  +------+-------+
-         |                 |
-   +-----V------+          |
-   | CloudFront | <--------+
-   +-----+------+
-         |
-        OAI
-(S3 Website endpoint)
-         |
-   +-----V-----+ (Bucket Policy blocks
-   | S3 Bucket |  connections NOT from
-   +-----+-----+  CloudFront OAI)
-         |
-         V
-     index.html (Contained inside bucket)
+        eu-west-3         us-east-1
+     +--------------+  +--------------+
+     | Route 53 DNS |  | ACM SSL cert |
+     +------+-------+  +------+-------+
+            |                 |
+      +-----V------+          |
+      | CloudFront | <--------+
+      +-----+------+
+            |
++-----------V------------+
+|  CloudFront Function   |
+| (for redirecting URLs) |
++-----------+------------+
+            |
+           OAI
+   (S3 Website endpoint)
+            |
+      +-----V-----+ (Bucket Policy blocks
+      | S3 Bucket |  connections NOT from
+      +-----+-----+  CloudFront OAI)
+            |
+            V
+        index.html (Contained inside bucket)
 ```
 
 ## Infrastructure as Code (IaC) Files
