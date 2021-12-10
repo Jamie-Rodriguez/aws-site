@@ -1,0 +1,58 @@
+:root {
+  --text-color: rgba(255, 255, 255, 0.92);
+  --link-color: rgb(0, 102, 204);
+  --bg-color: rgba(0, 0, 0, 0.92);
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-family: "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  margin: 1.3em;
+}
+
+
+header {
+  text-align: center;
+}
+
+header a {
+  color: var(--text-color);
+  font-size: 1.25em;
+  padding: 0.5em
+}
+header a:visited {
+  color: inherit;
+}
+
+
+h1 {
+  font-weight: 400;
+}
+
+h2 {
+  font-weight: 400;
+}
+
+
+a {
+  text-decoration: none;
+  color: var(--link-color);
+}
+a:hover {
+  text-decoration: underline;
+}
+
+hr {
+  height: 1px;
+  border: none;
+  background-color: white;
+}
+
+ul {
+  list-style-type: none;
+}
+
+p {
+  text-align: center;
+}

@@ -10,5 +10,5 @@ aws --region us-east-1 cloudformation deploy \
     --parameter-overrides file://${CF_ENV_FILE}
 
 echo "Uploading site files to $SITE_BUCKET_NAME"
-aws --region eu-west-3 s3 cp index.html s3://${SITE_BUCKET_NAME}
+aws --region eu-west-3 s3 cp site s3://${SITE_BUCKET_NAME} --recursive
 aws --region eu-west-3 s3 ls s3://${SITE_BUCKET_NAME}

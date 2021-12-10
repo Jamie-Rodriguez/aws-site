@@ -23,7 +23,7 @@ Resources:
         IgnorePublicAcls: true
         RestrictPublicBuckets: true
       WebsiteConfiguration:
-        IndexDocument: index.html
+        IndexDocument: home.html
 
   siteCfOai:
     Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
@@ -65,7 +65,7 @@ Resources:
           Compress: true
           TargetOriginId: myOrigin
           ViewerProtocolPolicy: allow-all
-        DefaultRootObject: index.html
+        DefaultRootObject: home.html
         Enabled: true
         HttpVersion: http2
         IPV6Enabled: true
