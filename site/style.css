@@ -8,9 +8,9 @@ body {
   background-color: var(--bg-color);
   color: var(--text-color);
   font-family: "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 2rem;
   margin: 1.3rem;
 }
-
 
 header {
   text-align: center;
@@ -18,11 +18,21 @@ header {
 
 header a {
   color: var(--text-color);
-  font-size: 1.25rem;
+  font-size: 1.6rem;
   padding: 0.5rem
 }
 header a:visited {
   color: inherit;
+}
+
+/* Large screens */
+@media only screen and (min-width: 1080px) {
+  body {
+    font-size: 1.2rem;
+  }
+  header a {
+    font-size: 1.25rem;
+  }
 }
 
 
@@ -33,7 +43,6 @@ h1 {
 h2 {
   font-weight: 400;
 }
-
 
 a {
   text-decoration: none;
