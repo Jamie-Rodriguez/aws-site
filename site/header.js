@@ -7,6 +7,7 @@ class Header extends HTMLElement {
     this.innerHTML = `
       <header>
         <a href="home.html">Home</a>
+        <a href="projects.html">Projects</a>
         <a href="contact.html">Contact</a>
       <hr>
       </header>
