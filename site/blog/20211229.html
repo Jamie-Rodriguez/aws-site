@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en-au">
+  <head>
+    <title>Jamie&rsquo;s Site | Pathfinding Using Depth-First Search</title>
+    <meta charset="utf-8">
+    <meta name="description" content="Jamie Rodríguez&rsquo;s website | Pathfinding Using Depth-First Search">
+    <meta name="author" content="Jamie Rodríguez">
+    <meta name="date" content="2021-12-29">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <script src="../header.js" type="text/javascript" defer></script>
+  </head>
+  <body>
+    <header-component></header-component>
+    <article>
+      <time datetime="2021-12-29">29<sup>th</sup> December, 2021</time>
+      <h1>Pathfinding Using Depth-First Search</h1>
+      <p>
+        <em>
+          Adventures in technical interviews and using pathfinding through depth-first search to solve the lowest common ancestor problem.
+        </em>
+      </p>
+
+      <nav>
+        <h2 id="contents">Contents</h2>
+        <ol>
+          <li>
+            <a href="#background">Background</a>
+          </li>
+          <li>
+            <a href="#the-question">The Question</a>
+          </li>
+          <li>
+            <a href="#high-level-design">High-Level Algorithm Design</a>
+          </li>
+          <li>
+            <a href="#depth-first-search">Depth-First Search</a>
+          </li>
+          <li>
+            <a href="#visualising-dfs">Visualising <abbr title="depth-first search">DFS</abbr></a>
+          </li>
+          <li>
+            <a href="#putting-it-all-together">Putting it All Together</a>
+          </li>
+          <li>
+            <a href="#time-complexity-analysis">Time Complexity Analysis</a>
+          </li>
+        </ol>
+      </nav>
+
+      <h2 id="background">Background</h2>
+      <p>
+        Recently I went through the interview process for a &ldquo;<em>FAANG</em>/<em>MAANG</em>/<em>MANGA</em>/<em>whatever they call them these days</em>&rdquo; company. I managed to get all the way through the numerous interviews - to the very end, but didn&rsquo;t end up receiving an offer.
+      </p>
+      <p>
+        As you don&rsquo;t get feedback after the process it&rsquo;s hard to know for sure; but I did have trouble with one technical question in the final set of technical interviews which I believe was what cost me the opportunity. Reflecting upon it in retrospective I had devised the right algorithm to solve the problem - I just didn&rsquo;t have enough time to finish the implementation.
+      </p>
+      <p>
+        I think this question is interesting and unique enough to write a blog post about because I actually didn&rsquo;t find much information about this <em>specific</em> problem on the internet when trying to check if I had the right solution afterward. I hope it may help some people out.
+      </p>
+
+      <h2 id="the-question">The Question</h2>
+      <blockquote>
+        Find the nearest common parent of any two nodes in a <strong>non-binary</strong> tree.
+      </blockquote>
+      <h3>Example:</h3>
+      <p>Given the following tree:</p>
+      <pre><code>
+           Anthony
+          /   /   \
+        Ben Caleb Dan
+            /   \    \
+          Ethan Frank Gary
+      </code></pre>
+      <table>
+        <caption>Example inputs and expected outputs</caption>
+        <tr>
+          <th>Input</th>
+          <th>Output</th>
+        </tr>
+        <tr>
+          <td>(Ethan, Frank)</td>
+          <td>Caleb</td>
+        </tr>
+        <tr>
+          <td>(Frank, Dan)</td>
+          <td>Anthony</td>
+        </tr>
+      </table>
+
+      <p>
+        I later found out that this problem already exists, it&rsquo;s called the <em>lowest common ancestor</em> (<abbr title="lowest common ancestor">LCA</abbr>) problem. Solutions to this on the internet are abundant for <em>binary</em> trees, however there are not so many for the <strong>non-binary</strong> tree case!
+      </p>
+
+      <h2 id="high-level-design">High-Level Algorithm Design</h2>
+      <p>
+        The general algorithm I devised is pretty simple really; but as they say, <q>the devil is in the details</q>:
+      </p>
+      <pre><code>
+<span style="color: gray;">1</span>  <span style="color: gold;">lowestCommonAncestor</span>(<span style="color: green;">tree</span>, <span style="color: lightskyblue">nodeA</span>, <span style="color: deeppink">nodeB</span>)
+<span style="color: gray;">2</span>      <span style="color: darkviolet;">pathToA</span> = <span style="color: gold;">pathFromRootToNode</span>(<span style="color: green;">tree</span>, <span style="color: lightskyblue">nodeA</span>)
+<span style="color: gray;">3</span>      <span style="color: tomato;">pathToB</span> = <span style="color: gold;">pathFromRootToNode</span>(<span style="color: green;">tree</span>, <span style="color: deeppink">nodeB</span>)
+<span style="color: gray;">4</span>
+<span style="color: gray;">5</span>      <span style="color: gray;">/* Case: nodeB is the root node */</span>
+<span style="color: gray;">6</span>      <span style="color: royalblue;">if</span> <span style="color: gold;">length</span>(<span style="color: tomato;">pathToB</span>) == 1:
+<span style="color: gray;">7</span>          <span style="color: royalblue;">return</span> <span style="color: tomato;">pathToB</span>[0]
+<span style="color: gray;">8</span>
+<span style="color: gray;">9</span>      <span style="color: royalblue;">for</span> <span style="color: lime;">i</span> <span style="color: royalblue;">in</span> {0 <span style="color: royalblue;">to</span> <span style="color: gold;">length</span>(<span style="color: tomato;">pathToB</span>) - 1}:
+<span style="color: gray;">10</span>         <span style="color: royalblue;">if</span> <span style="color: darkviolet;">pathToA</span>[<span style="color: lime;">i</span>] != <span style="color: tomato;">pathToB</span>:
+<span style="color: gray;">11</span>             <span style="color: royalblue;">return</span> <span style="color: darkviolet;">pathToA</span>[<span style="color: lime;">i</span>-1]
+<span style="color: gray;">12</span>
+<span style="color: gray;">13</span>     <span style="color: gray;">/* Case: pathToB is a subset of pathToA,</span>
+<span style="color: gray;">14</span>     <span style="color: gray;">   return the last node of pathToB */</span>
+<span style="color: gray;">15</span>     <span style="color: royalblue;">return</span> <span style="color: gold;">last</span>(<span style="color: tomato;">pathToB</span>)
+      </code></pre>
+      <p>
+        We can make the assumption that the two nodes exist in the same tree. Therefore we can guarantee that the the two paths will have at least one node match - the root node.
+      </p>
+      <p>
+        Okay so now you&rsquo;re probably thinking <q>But Jamie, what is that function <code>pathFromRootToNode()</code>? How do you find the path to the node?</q> Well dear reader, allow me to introduce you to a powerful tool in any practical programmer&rsquo;s arsenal; <em>depth-first search (<abbr title="depth-first search">DFS</abbr>)</em>.
+      </p>
+      <p>
+        <em><strong>Note</strong>: Although <abbr title="depth-first search">DFS</abbr> is guaranteed to find the shortest path between two nodes in a tree, this <strong>cannot</strong> be guaranteed for graphs! For graphs I recommend looking into breadth-first search (<abbr title="breadth-first search">BFS</abbr>).</em>
+      </p>
+
+      <h2 id="depth-first-search">Depth-First Search</h2>
+      <p>
+        I won&rsquo;t be going into <abbr title="depth-first search">DFS</abbr> in much <em>depth</em> (haha) as there already exist other resources that do a good job of explaining the algorithm. I recommend:
+      </p>
+      <ul>
+        <li>
+          <cite>Introduction to Algorithms</cite>, Thomas H. Cormen, Charles E. Leiserson, Ronald L. Rivest & Clifford Stein
+          <q>Chapter 22.3 Depth-first search</q>
+        </li>
+        <li>
+          <cite>Cracking the Coding Interview</cite>, Gayle Laakmann McDowell
+          <q>Chapter 4 | Trees and Graphs - Graph Search</q>
+        </li>
+      </ul>
+
+      <p>
+        However it&rsquo;s still important to know the general pattern of <abbr title="depth-first search">DFS</abbr>. To describe it informally, we get the child nodes of the current node and pick one child node. We then go to the chosen child node and repeat this process of getting it&rsquo;s child node. This has the result of traversing the tree by going as far <em>down</em> the tree as possible, then returning back up to the previous node, repeating the process for the next child. This is how the algorithm gets the name <em>depth-first search</em>.
+      </p>
+
+      <p>
+        I&rsquo;ve illustrated the &ldquo;path&rdquo; that <abbr title="depth-first search">DFS</abbr> takes exploring an example tree.
+      </p>
+      <object data="20211229/dfs.svg" type="image/svg+xml" width="80%"></object>
+
+      <p>
+        Notice how the path always chooses to take the <em>deepest</em> option first - the child nodes, as opposed to exploring sibling nodes first (as seen in <abbr title="breadth-first search">BFS</abbr>).
+      </p>
+
+      <p>
+        Okay, let&rsquo;s use <abbr title="depth-first search">DFS</abbr> to record the path from the root to a arbitrary node!
+      </p>
+
+      <p>
+        There are actually two ways to implement <abbr title="depth-first search">DFS</abbr>; iteratively and recursively. There are not really advantages/disadvantages of either approach, it&rsquo;s more a matter of preference - the recursive approach is a little more succinct however.
+      </p>
+
+      <p>
+        I will first use the more general case of the <em>recursive</em> <abbr title="depth-first search">DFS</abbr> here that can apply to graphs also:
+      </p>
+
+      <pre><code>
+<span style="color: gray;">1</span>   <span style="color: gold;">dfs</span>(<span style="color: green;">graph</span>, <span style="color: cyan;">goal</span>, <span style="color: aquamarine;">currentVertex</span>, <span style="color: darkviolet;">visited</span>, <span style="color: tomato;">path</span>)
+<span style="color: gray;">2</span>       <span style="color: royalblue;">if</span> <span style="color: aquamarine;">currentVertex</span> <span style="color: royalblue;">not in</span> <span style="color: darkviolet;">visited</span>:
+<span style="color: gray;">3</span>           <span style="color: royalblue;">if</span> <span style="color: aquamarine;">currentVertex</span> == <span style="color: cyan;">goal</span>:
+<span style="color: gray;">4</span>               <span style="color: royalblue;">return</span> <span style="color: gold;">concat</span>(<span style="color: tomato;">path</span>, <span style="color: aquamarine;">currentVertex</span>)
+<span style="color: gray;">5</span>
+<span style="color: gray;">6</span>           <span style="color: darkviolet;">visited</span> = <span style="color: gold;">concat</span>(<span style="color: darkviolet;">visited</span>, <span style="color: aquamarine;">currentVertex</span>)
+<span style="color: gray;">7</span>
+<span style="color: gray;">8</span>           <span style="color: royalblue;">for</span> <span style="color: deeppink;">vertex</span> <span style="color: royalblue;">in</span> <span style="color: gold;">adjacentVertices</span>(<span style="color: green;">graph</span>, <span style="color: aquamarine;">currentVertex</span>):
+<span style="color: gray;">9</span>               <span style="color: lightcoral;">p</span> = <span style="color: gold;">dfs</span>(<span style="color: green;">graph</span>, <span style="color: cyan;">goal</span>, <span style="color: deeppink;">vertex</span>, <span style="color: darkviolet;">visited</span>, <span style="color: gold;">concat</span>(<span style="color: tomato;">path</span>, <span style="color: aquamarine;">currentVertex</span>))
+<span style="color: gray;">10</span>
+<span style="color: gray;">11</span>              <span style="color: royalblue;">if</span> <span style="color: lightcoral;">p</span> <span style="color: royalblue;">is not undefined</span>:
+<span style="color: gray;">12</span>                  <span style="color: royalblue;">return</span> <span style="color: lightcoral;">p</span>
+<span style="color: gray;">13</span>
+<span style="color: gray;">14</span>       <span style="color: gray;">/* Hit a dead end,</span>
+<span style="color: gray;">15</span>       <span style="color: gray;">   a vertex with no new adjacent vertices */</span>
+<span style="color: gray;">16</span>       <span style="color: royalblue;">return undefined</span>
+      </code></pre>
+
+      <p>
+        An important detail to note is that we record the nodes we have already seen to stop the algorithm from indefinitely looping through a graph that has cycles in it.
+      </p>
+
+      <p>
+        Because trees by definition do not contain cycles, we can forgo recording the previously visited nodes for a tree-specific implementation:
+      </p>
+
+      <pre><code>
+<span style="color: gray;">1</span>   <span style="color: gold;">dfs</span>(<span style="color: green;">tree</span>, <span style="color: cyan;">goal</span>, <span style="color: aquamarine;">currentNode</span>, <span style="color: tomato;">path</span>)
+<span style="color: gray;">2</span>       <span style="color: royalblue;">if</span> <span style="color: aquamarine;">currentNode</span> == <span style="color: cyan;">goal</span>:
+<span style="color: gray;">3</span>           <span style="color: royalblue;">return</span> <span style="color: gold;">concat</span>(<span style="color: tomato;">path</span>, <span style="color: aquamarine;">currentNode</span>)
+<span style="color: gray;">4</span>
+<span style="color: gray;">5</span>       <span style="color: royalblue;">for</span> <span style="color: deeppink;">node</span> <span style="color: royalblue;">in</span> <span style="color: gold;">childNodes</span>(<span style="color: green;">tree</span>, <span style="color: aquamarine;">currentNode</span>):
+<span style="color: gray;">6</span>           <span style="color: lightcoral;">p</span> = <span style="color: gold;">dfs</span>(<span style="color: green;">tree</span>, <span style="color: cyan;">goal</span>, <span style="color: deeppink;">node</span>, <span style="color: gold;">concat</span>(<span style="color: tomato;">path</span>, <span style="color: aquamarine;">currentNode</span>))
+<span style="color: gray;">7</span>
+<span style="color: gray;">8</span>           <span style="color: royalblue;">if</span> <span style="color: lightcoral;">p</span> <span style="color: royalblue;">is not undefined</span>:
+<span style="color: gray;">9</span>               <span style="color: royalblue;">return</span> <span style="color: lightcoral;">p</span>
+<span style="color: gray;">10</span>
+<span style="color: gray;">11</span>       <span style="color: gray;">/* Hit a leaf node which is not the goal node */</span>
+<span style="color: gray;">12</span>       <span style="color: royalblue;">return undefined</span>
+      </code></pre>
+
+      <p>
+        The most important lines to examine are <code>6</code>-<code>9</code>, if we don&rsquo;t find the target node, search deeper in the tree.
+      </p>
+
+      <p>
+        If we hit the bottom of the tree i.e. a <em>leaf node</em>, we return <code>undefined</code>, which will propagate back up the tree.
+      </p>
+
+      <p>
+        On the otherhand, if we find the target node, we return the path that we took down to the node, back up through the recursive callstack to the initial function call.
+      </p>
+
+      <h2 id="visualising-dfs">Visualising <abbr title="depth-first search">DFS</abbr></h2>
+      <p>
+        This may be a bit confusing at first because of the recursion. What I find helps me is to visualise the actual runtime execution of the algorithm.
+      </p>
+
+      <p>
+        Although I came up with this notation myself, I&rsquo;m sure it has been thought of before, if you&rsquo;ve seen it previously, please let me know.
+      </p>
+
+      <p>
+        What I do is visualise the stack frames produced during the algorithm&rsquo;s runtime. I usually go through this manually and sketch it out on a piece of paper.
+      </p>
+
+      <p>
+        <em>Note</em>: Although this picture shows the generalised, graph-version of the algorithm being run on the previously mentioned tree, the <abbr title="depth-first search">DFS</abbr> tree-version is <em>exactly</em> the same as the graph algorithm - just without the <code>visited</code> variable present, as previously discussed above.
+      </p>
+
+      <object data="20211229/dfs-stack-frames.svg" type="image/svg+xml" width="50%"></object>
+
+      <h2 id="putting-it-all-together">Putting it All Together</h2>
+      <p>
+        Now that we have realised our implementation of the <code>pathFromRootToNode()</code> function at the beginning of the article through <abbr title="depth-first search">DFS</abbr>, we can specify a more concrete implementation of the <abbr title="lowest common ancestor">LCA</abbr> algorithm:
+      </p>
+
+      <pre><code>
+<span style="color: gray;">1</span>  <span style="color: gold;">lca</span>(<span style="color: green;">tree</span>, <span style="color: lightskyblue">nodeA</span>, <span style="color: deeppink">nodeB</span>)
+<span style="color: gray;">2</span>      <span style="color: mediumturquoise;">root</span> = <span style="color: gold;">getRoot</span>(<span style="color: green;">tree</span>)
+<span style="color: gray;">3</span>      <span style="color: darkviolet;">pathToA</span> = <span style="color: gold;">dfs</span>(<span style="color: green;">tree</span>, <span style="color: lightskyblue">nodeA</span>, <span style="color: mediumturquoise;">root</span>, [])
+<span style="color: gray;">4</span>      <span style="color: tomato;">pathToB</span> = <span style="color: gold;">dfs</span>(<span style="color: green;">tree</span>, <span style="color: deeppink">nodeB</span>, <span style="color: mediumturquoise;">root</span>, [])
+<span style="color: gray;">5</span>
+<span style="color: gray;">6</span>      <span style="color: gray;">/* Case: nodeB is the root node */</span>
+<span style="color: gray;">7</span>      <span style="color: royalblue;">if</span> <span style="color: gold;">length</span>(<span style="color: tomato;">pathToB</span>) == 1:
+<span style="color: gray;">8</span>          <span style="color: royalblue;">return</span> <span style="color: tomato;">pathToB</span>[0]
+<span style="color: gray;">9</span>
+<span style="color: gray;">10</span>     <span style="color: royalblue;">for</span> <span style="color: lime;">i</span> <span style="color: royalblue;">in</span> {0 <span style="color: royalblue;">to</span> <span style="color: gold;">length</span>(<span style="color: tomato;">pathToB</span>) - 1}:
+<span style="color: gray;">11</span>         <span style="color: royalblue;">if</span> <span style="color: darkviolet;">pathToA</span>[<span style="color: lime;">i</span>] != <span style="color: tomato;">pathToB</span>:
+<span style="color: gray;">12</span>             <span style="color: royalblue;">return</span> <span style="color: darkviolet;">pathToA</span>[<span style="color: lime;">i</span>-1]
+<span style="color: gray;">13</span>
+<span style="color: gray;">14</span>     <span style="color: gray;">/* Case: pathToB is a subset of pathToA,</span>
+<span style="color: gray;">15</span>     <span style="color: gray;">   return the last node of pathToB */</span>
+<span style="color: gray;">15</span>     <span style="color: royalblue;">return</span> <span style="color: gold;">last</span>(<span style="color: tomato;">pathToB</span>)
+      </code></pre>
+
+      <p>
+        I&rsquo;ve renamed <code>pathFromRootToNode()</code> to <code>dfs()</code> for the purposes of illustrating where our concrete implementation fits in, but I personally think that <code>pathFromRootToNode()</code> is a more descriptive name that actually tells you what the function is doing.
+      </p>
+
+      <h2 id="time-complexity-analysis">Time Complexity Analysis</h2>
+      <p>
+        For <strong>graphs</strong>, <abbr title="depth-first search">DFS</abbr> has a time complexity of <span class="math">O(V + E)</span>, where <span class="math">V</span> = the number of vertices in the graph, and <span class="math">E</span> = the number of edges in the graph. There is a good derivation of this in <cite>Introduction to Algorithms</cite>.
+      </p>
+      <p>
+        <em>However</em> for our case, <strong>trees</strong>, the time complexity is just <span class="math">O(n)</span>, where <span class="math">n</span> = the number of nodes in the tree. This is because the number of edges in a tree will always be <span class="math">n-1</span>; this simplifies to <span class="math">O(n)</span>.
+      </p>
+
+      <p>
+        After we have the paths to each of the two nodes, in lines <code>10</code>-<code>12</code> we are simply iterating through one of the paths and cross-checking with the other in order to find at what node the paths stop being equal. At that point, we return the previous node and we have finally found the lowest common ancestor! &#127881;
+      </p>
+
+      <p>
+        It should be easy to see that the time complexity of that search will be <span class="math">O(D)</span>, where <span class="math">D</span> = depth of the tree. Having a path be a leaf-node - the deepest possible depth is an upper bound on the size of the runtime and it&rsquo;s also obvious that the run-time will increase linearly with the increase in size of the path.
+      </p>
+
+      <p>
+        To sum the two algorithms together, let&rsquo;s imagine a worst-case scenario; a tree that is just a linear list of nodes:
+      </p>
+
+      <pre><code>
+        A
+         \
+          B
+           \
+            C
+             \
+              D
+      </code></pre>
+
+      <p>
+        If we call <code>pathFromRootToNode()</code> on nodes <code>C</code> and <code>D</code>, we will get paths of length <span class="math">n-1</span> and <span class="math">n</span> respectively, with respective runtimes of <span class="math">O(n-1)</span> and <span class="math">O(n)</span>.
+      </p>
+      <p>
+        Note that <span class="math">O(n-1) = O(n)</span>.
+      </p>
+      <p>
+        For the second part (lines <code>6</code>-<code>15</code>) of the <code>lca()</code> function, we will have to traverse all of <code>pathC</code> to discover that it is a subset of <code>pathD</code>. The runtime to find the last node is therefore <span class="math">O(n-1) = O(n)</span>.
+      </p>
+      <p>
+        Adding the runtime of the two <abbr title="depth-first search">DFS</abbr>&rsquo;es and the search for the last common node, we get <span class="math">O(3n) = O(n)</span>! &#127881;
+      </p>
+    </article>
+  </body>
+</html>

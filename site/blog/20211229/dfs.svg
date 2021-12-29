@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1"
+     width="105" height="90"
+     viewBox="0 0 105 90"
+     xmlns="http://www.w3.org/2000/svg">
+    <title property="dc:title">Depth First Search</title>
+    <desc property="dc:creator">Jamie Rodríguez</desc>
+    <metadata xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+              xmlns:dc="http://purl.org/dc/elements/1.1/"
+              xmlns:cc="http://creativecommons.org/ns#">
+        <rdf:RDF>
+            <rdf:Description rdf:about="">
+                <dc:title>Depth First Search</dc:title>
+                <dc:creator>Jamie Rodríguez</dc:creator>
+            </rdf:Description>
+        </rdf:RDF>
+    </metadata>
+
+    <style>
+        text {
+            fill: white;
+            font: 25px sans-serif;
+        }
+        line {
+            stroke: white;
+            stroke-width: 2;
+            stroke-linecap: round;
+        }
+        path {
+            stroke: white;
+        }
+        .arrowhead {
+            fill: white;
+        }
+    </style>
+
+    <!-- <rect width="100%" height="100%" fill="white" /> -->
+
+    <text x="41" y="23">A</text>
+    <text x="26" y="53">B</text>
+    <text x="57" y="53">C</text>
+    <text x="11" y="84">D</text>
+    <text x="41" y="84">E</text>
+    <text x="77" y="84">F</text>
+
+    <line x1="45" y1="25" x2="37" y2="33" />
+    <line x1="54" y1="25" x2="61" y2="33" />
+    <line x1="31" y1="55" x2="22" y2="64" />
+    <line x1="60" y1="54" x2="51" y2="64" />
+    <line x1="72" y1="54" x2="82" y2="64" />
+
+    <path fill="none"
+          stroke-width="1"
+          stroke-linecap="butt"
+          stroke-linejoin="round"
+          stroke-dasharray="2,2"
+          d="M56.2274+5.1922C57.6104+11.7876+59.4555+21.0121+61.8494+24.9942C64.8136+29.9251+71.6532+32.0183+73.9661+37.2862C76.1023+42.1517+76.5381+47.6327+78.519+52.5634C81.9623+61.1339+97.028+59.9911+95.8794+75.5252C95.1484+85.4111+80.7698+91.3988+74.7698+83.2507C70.4896+77.438+76.0509+70.3732+74.3514+63.7296C73.3365+59.7621+69.6395+58.1395+65.794+58.303C53.5148+58.825+63.6233+76.9814+57.786+84.1687C55.5569+86.9134+48.4281+88.7382+43.9836+86.591C40.7818+85.0441+39.4886+81.7275+39.4668+79.782C39.1847+54.6073+44.8739+70.2369+54.7794+53.5887C57.2419+49.4499+57.4396+30.159+50.8447+28.6532C41.3851+26.4934+43.5949+47.9931+43.0389+50.0672C41.5386+55.6644+31.0551+57.432+29.187+64.6537C27.7738+70.1167+33.4745+76.3496+29.074+81.7944C26.8428+84.5551+12.2958+88.8122+9.67725+81.3458C7.72229+75.7715+7.94788+68.7698+12.0365+64.1356C14.6471+61.1767+21.4702+60.3107+23.4972+56.3305C27.2927+48.8778+23.789+43.0741+26.0235+35.5061C27.8576+29.2942+34.7359+29.7611+38.3317+23.5469C42.1927+16.8746+43.3747+8.26187+45.0922+1.13534" />
+    <path d="M59.9681+5.90465L55.26+0.797428L53.1318+7.4096L59.9681+5.90465Z"
+          class="arrowhead" />
+</svg>
