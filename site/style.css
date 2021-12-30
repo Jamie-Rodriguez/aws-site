@@ -4,10 +4,21 @@
   --bg-color: rgba(0, 0, 0, 0.92);
 }
 
+@font-face {
+  font-family: font-style;
+  src: local("-apple-system"),
+       local("SF Pro Text"),
+       local("Segoe UI"),
+       local("Roboto"),
+       local("Helvetica Neue"),
+       local("Helvetica"),
+       local("Arial");
+}
+
 body {
   background-color: var(--bg-color);
   color: var(--text-color);
-  font-family: -apple-system, system-ui, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "font-style", sans-serif;
   font-size: 2rem;
   margin: 1.3rem;
   font-feature-settings: "kern";
