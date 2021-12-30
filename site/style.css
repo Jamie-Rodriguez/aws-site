@@ -6,9 +6,7 @@
 
 @font-face {
   font-family: font-style;
-  src: local("-apple-system"),
-       local("SF Pro Text"),
-       local("Segoe UI"),
+  src: local("Segoe UI"),
        local("Roboto"),
        local("Helvetica Neue"),
        local("Helvetica"),
