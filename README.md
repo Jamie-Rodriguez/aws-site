@@ -14,10 +14,12 @@ The CloudFormation templates are supplied their parameters from the JSON file `.
 
 ## Problems
 ### ACM SSL Certificate Region
-A hard requirement of AWS is that ACM certificates for CloudFront distributions be created in `us-east-1`. As I want to deploy all my resources (except the certificate) to `eu-west-3`, this presents a problem as a CloudFormation Stack is not capable of multi-region deployment of resources. Because of this, we are forced to use *CloudFormation StackSets*.
+A hard requirement of AWS is that ACM certificates for CloudFront distributions be created in `us-east-1`. As I want to deploy all my resources (except the aforementioned certificate) to `eu-west-3`, this presents a problem as a CloudFormation Stack is not capable of multi-region deployment of resources. Because of this, we are forced to use *CloudFormation StackSets*.
 
 ### Using URL Paths Without `.html` Extension
 In order to use URL paths *without* the `.html` extension e.g. `https://website.com/about`, instead of *only* being able to use `https://website.com/about.html` by default; I use a *CloudFront Function* to map the "*clean*" URLs to the corresponding `.html` file stored in S3. As this happens all within Amazon's network, the client does not see any of this indirection and to them, it "just works".
+
+This function can be found in `urlRedirectFunction` of `website-infra.yaml`.
 
 ## Infrastructure Generated
 The CloudFormation template `stackset.yaml` generates the following infrastructure stack as below:
@@ -62,4 +64,4 @@ This is the IaC file that gets deployed to provision the website resources. It c
 This file must be deployed to `us-east-1`, because AWS requires ACM certificates for CloudFront distributions *must* be deployed in `us-east-1`. As it's currently defined in the file, the Stack Set resource (i.e. the rest of the infrastructure) deploys to `eu-west-3`.
 
 ## Deployment Instructions
-Pretty straightforward I think. Run `deploy.sh` to deploy the website, and `teardown.sh` to delete all resources.
+Pretty straightforward I think; run `deploy.sh` to deploy the website, and `teardown.sh` to delete all resources.

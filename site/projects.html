@@ -45,7 +45,7 @@
       I created this for two reasons:
       <ol>
         <li>
-          To learn <em>modern</em> Clojure development, specifically using CLI + Deps with unit testing.
+          To learn the <em>modern</em>, in-built Clojure development ecosystem, specifically using CLI + Deps with unit testing.
         </li>
         <li>
           To use this engine/environment in the future to experiment with reinforcement learning agents.
@@ -53,21 +53,24 @@
       </ol>
     </p>
 
-    <h1>Microservice Web-API</h1>
+    <h1>Adventures in Modern C Development: HTTP Server</h1>
     <p>
-      <a href="https://github.com/Jamie-Rodriguez/microservice-web-api">https://github.com/Jamie-Rodriguez/microservice-web-api</a>
+      <a href="https://github.com/Jamie-Rodriguez/c-http-server">https://github.com/Jamie-Rodriguez/c-http-server</a>
     </p>
     <p>
-      I hope that this repository can serve as an easy to understand, minimal example for &ldquo;containerising&rdquo; (and orchestrating) a microservice-style web server application.
+      Minimal example of a HTTP server using the POSIX <em>sockets</em> library, written in C.
     </p>
     <p>
-      Equally important is the example of a modern Clojure webserver - as all the resources I could find were using much older, deprecated libraries. I hope this can be a useful reference for others.
+      I created this project simply to see how difficult it is to write a HTTP server using C. Would I recommend it? Unless it is a simple server, I would say&mldr; &ldquo;<em>no</em>&rdquo;.
     </p>
     <p>
-      Eventually I hope for this example to be as close to a production-ready system as possible i.e. it will have containerisation, orchestration, scalability and observability to ensure as much reliability as possible. But that&rsquo;s enough buzzwords for now.
+      However I think that this repo is useful as a template for a modern C project that includes unit testing for test-driven development.
     </p>
     <p>
-      Perhaps way in the future I will also add capability to deploy this system to a cloud environment, probably using a platform-agnostic tool such as Terraform.
+      I organised this project with a more modern, yet minimal project structure; featuring unit testing using the lightweight library <a href="https://github.com/ThrowTheSwitch/Unity">Unity</a>.
+    </p>
+    <p>
+      To remain minimalistic, this project only uses <a href="https://www.gnu.org/software/make/">Make</a> for it&rsquo;s buildsystem. The <code>makefile</code> makes use of Make&rsquo;s &ldquo;<a href="https://www.gnu.org/software/make/manual/html_node/Pattern-Rules.html">pattern rules</a>&rdquo; so that you don&rsquo;t need to individually include a file in both the runtime and unit-testing builds every time you add a new file to the project.
     </p>
 
     <h1>Infrastructure as Code - AWS Static Site</h1>
@@ -83,23 +86,6 @@
     </ul>
     <p>
       See GitHub link for details of the resources and architecture created.
-    </p>
-
-    <h1>C: Command Line Arguments Processing</h1>
-    <p>
-      <a href="https://github.com/Jamie-Rodriguez/C_Command_Line_Args_Processing">https://github.com/Jamie-Rodriguez/C_Command_Line_Args_Processing</a>
-    </p>
-    <p>
-      <code>getopt.h</code> is the most popular library used to process command line arguments in C. However I found it a bit cumbersome to use as well as not as flexible as required for my uses. As well as this, it is not a standard library and so is not guaranteed to be present on all systems.
-    </p>
-    <p>
-      My technique is pretty simple, I use a hash function to compare the command line flags inside a <code>switch</code> statement. I find this cleaner and safer than using something like <code>strcmp()</code> in this specific case.
-    </p>
-    <p>
-      The GitHub repo contains two code examples to inspect <code>getopt.h</code> vs my hash method.
-    </p>
-    <p>
-      As I write this, I think I should be able to use C macros to automatically hash the command line flags at the preprocessor stage, rather than manually as it is done currently. If I revisit this in the future I will add this in.
     </p>
   </body>
 </html>
