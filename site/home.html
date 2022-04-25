@@ -16,12 +16,18 @@
   </head>
   <body>
     <header-component></header-component>
-    <img src="headshot.jpg"
-         alt="Headshot of Jamie Rodríguez"
-         style="width: 10rem;
-                height: 10rem;
-                margin: 1.2rem;
-                float: left;">
+
+    <picture>
+      <source type="image/avif" srcset="headshot400x400.avif">
+      <source type="image/webp" srcset="headshot400x400.webp">
+      <img src="headshot400x400.jpg"
+           alt="Headshot of Jamie Rodríguez"
+           style="width: 10rem;
+                  height: 10rem;
+                  margin: 1.2rem;
+                  float: left;">
+    </picture>
+
     <p>
       Welcome to the site of me, <em>Jamie Rodríguez</em>
     </p>

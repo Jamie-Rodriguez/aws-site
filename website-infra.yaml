@@ -58,6 +58,8 @@ Resources:
                 || event.request.uri.includes('.html')
                 || event.request.uri.includes('.css')
                 || event.request.uri.includes('.js')
+                || event.request.uri.includes('.avif')
+                || event.request.uri.includes('.webp')
                 || event.request.uri.includes('.jpg')
                 || event.request.uri.includes('.svg')
                 ? ''
