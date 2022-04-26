@@ -62,6 +62,7 @@ Resources:
                 || event.request.uri.includes('.webp')
                 || event.request.uri.includes('.jpg')
                 || event.request.uri.includes('.svg')
+                || event.request.uri.includes('.png')
                 ? ''
                 : '.html';
 
