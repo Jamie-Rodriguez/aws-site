@@ -79,7 +79,7 @@ pre code {
   overflow: scroll;
   display: block;
 }
-/* What I'm using to style maths equations*/
+/* What I'm using to style maths equations */
 span.math {
   font-style: italic;
   font-family: "Times New Roman", Times, serif;
