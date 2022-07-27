@@ -6,7 +6,7 @@
     <title>Jamie&rsquo;s Site | Projects</title>
     <meta name="description" content="Jamie Rodríguez&rsquo;s website | Projects">
     <meta name="author" content="Jamie Rodríguez">
-    <meta name="date" content="2021-12-12">
+    <meta name="date" content="2022-07-29">
 
     <link rel="stylesheet" type="text/css" href="style.css">
     <script src="header.js" type="text/javascript" defer></script>
@@ -42,12 +42,12 @@
       <em>See my GitHub link for more in-depth explanation and analysis.</em>
     </p>
 
-    <h1>Tic-Tac-Clojure</h1>
+    <h1>Tic-Tac-Clojure; Experiments with AI</h1>
     <p>
       <a href="https://github.com/Jamie-Rodriguez/tic-tac-clojure">https://github.com/Jamie-Rodriguez/tic-tac-clojure</a>
     </p>
     <p>
-      Implemented a tic-tac-toe game engine in Clojure, in a pure functional style, using a modern Clojure stack (CLI + Deps).
+      Implemented a tic-tac-toe game engine in Clojure, in a purely functional style, using a modern Clojure stack (CLI + Deps).
     </p>
     <p>
       I created this for two reasons:
@@ -56,10 +56,31 @@
           To learn the <em>modern</em>, in-built Clojure development ecosystem, specifically using CLI + Deps with unit testing.
         </li>
         <li>
-          To use this engine/environment in the future to experiment with reinforcement learning agents.
+          To use this engine/environment to experiment with reinforcement learning agents.
         </li>
       </ol>
     </p>
+    <p>
+      I then created an AI agent that can play the game. It uses an algorithm called <em>Monte Carlo tree search</em> which, as the name describes, uses the Monte Carlo sampling technique to approximate and then search the game tree.
+    </p>
+    <p>
+      Will probably experiment with more classical reinforcement learning algorithms in the future.
+    </p>
+
+    <h1>Lost in <em>Monad&acute;s Land</em> &mdash; Monads in C&plus;&plus;</h1>
+    <p>
+      <a href="https://github.com/Jamie-Rodriguez/cpp-monads">https://github.com/Jamie-Rodriguez/cpp-monads</a>
+    </p>
+    <p>
+      What better way to understand how something works than to make one yourself?
+    </p>
+    <p>
+      This repo is the result of me trying to ascertain how the <em>IO</em> monad works. For fun I decided to write it in a language that is the polar-opposite of a purely functional programming language - interestingly it did not turn out as convoluted as I thought.
+    </p>
+    <p>
+      I actually started first by implementing other monads that I already had a decent understanding of their behaviour - <em>Maybe</em> and <em>List</em>, which helped gain a solid general understanding of the monad pattern before applying it to the <em>IO</em> monad.
+    </p>
+
 
     <h1>Adventures in Modern C Development: HTTP Server</h1>
     <p>
