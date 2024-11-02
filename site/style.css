@@ -35,6 +35,20 @@ header a:visited {
   color: inherit;
 }
 
+/* *Inline* code */
+code {
+  color: crimson;
+  font-size: 1.8rem;
+  background-color: #f9fafa;
+  border-color: #d2d2d7;
+  border-width: 1px;
+  border-radius: .3rem;
+  padding-left: .25rem;
+  padding-right: .25rem;
+  padding-top: 1px;
+  padding-bottom: 1px;
+}
+
 /* Large screens */
 @media only screen and (min-width: 1080px) {
   body {
@@ -43,8 +57,10 @@ header a:visited {
   header a {
     font-size: 1.25rem;
   }
+  code {
+    font-size: 1.0rem;
+  }
 }
-
 
 h1, h2, h3 {
   font-weight: 500;
@@ -93,20 +109,6 @@ object {
   margin-left: auto;
   margin-right: auto;
   display: block;
-}
-
-/* *Inline* code */
-code {
-  color: crimson;
-  font-size: .9rem;
-  background-color: #f9fafa;
-  border-color: #d2d2d7;
-  border-width: 1px;
-  border-radius: .3rem;
-  padding-left: .25rem;
-  padding-right: .25rem;
-  padding-top: 1px;
-  padding-bottom: 1px;
 }
 
 /* What I'm using to make a <code> *block* element */
