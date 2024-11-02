@@ -73,12 +73,7 @@ time {
   font-size: 1rem;
   font-style: italic;
 }
-/* What I'm using to make a <code> block element */
-pre code {
-  font-size: 1.5rem;
-  overflow: scroll;
-  display: block;
-}
+
 /* What I'm using to style maths equations */
 span.math {
   font-style: italic;
@@ -90,8 +85,70 @@ td, th {
   text-align: center;
 }
 
+dl > dt {
+  margin: 0.25rem auto;
+}
+
 object {
   margin-left: auto;
   margin-right: auto;
-  display:block;
+  display: block;
+}
+
+/* *Inline* code */
+code {
+  color: crimson;
+  font-size: .9rem;
+  background-color: #f9fafa;
+  border-color: #d2d2d7;
+  border-width: 1px;
+  border-radius: .3rem;
+  padding-left: .25rem;
+  padding-right: .25rem;
+  padding-top: 1px;
+  padding-bottom: 1px;
+}
+
+/* What I'm using to make a <code> *block* element */
+pre code {
+  font-size: 1.2rem;
+  overflow: scroll;
+  display: block;
+  background-color: #262626;
+  color: #ffd7af;
+}
+
+/* Syntax highlighting */
+pre code span.line-num {
+  color: #8a8a8a;
+}
+
+pre code span.keyword {
+  color: #d75f5f;
+}
+
+pre code span.operator {
+  color: #ff8700;
+}
+
+/* Mostly for literal values, but is also used for imports for some reason */
+pre code span.value {
+  color: #d787af;
+}
+
+/* Also used for null for some reason */
+pre code span.string {
+  color: #87af87;
+}
+
+pre code span.function {
+  color: #afaf00;
+}
+
+pre code span.init {
+  color: #87afaf;
+}
+
+pre code span.import {
+  color: #ffaf00;
 }
