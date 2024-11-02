@@ -19,9 +19,11 @@
   </head>
   <body>
     <header-component></header-component>
+
     <p>
       This page gives a brief overview of some projects I have completed. The GitHub repos’ <code>README.md</code> files go into more detail if you are curious.
     </p>
+
     <h1>Learning to Play Blackjack through <em>Deep Reinforcement Learning</em></h1>
     <p>
       <a href="https://github.com/Jamie-Rodriguez/RL-Blackjack">https://github.com/Jamie-Rodriguez/RL-Blackjack</a>
@@ -42,6 +44,26 @@
       <em>See my GitHub link for more in-depth explanation and analysis.</em>
     </p>
 
+    <h1>4-Clojure; An event-sourced, CQRS banking system written in Clojure</h1>
+    <p>
+      <a href="https://github.com/Jamie-Rodriguez/4-clojure">https://github.com/Jamie-Rodriguez/4-clojure</a>
+    </p>
+    <p>
+      This is the result of my experimental implementation of an event-sourced (ES), CQRS system. I deliberately wanted to experiment with writing my own ES+CQRS system <em>without a library</em>, in order to gain a deeper understanding of how such systems are designed.
+    </p>
+    <p>
+      I had a small amount of experience with CQRS systems at work that used Elixir and the library called Commanded for CQRS; but I wanted to understand the CQRS architecture and concept at a deeper level. I found that the best way to do this was to write my own system from scratch.
+    </p>
+    <p>
+      I was finding that the CQRS system at work was quite complex and difficult to extend. I wanted to see if I could create a simpler system that was easier to extend and maintain. For this, Clojure was perfect as it is an extremely expressive language and it made prototyping a breeze.
+    </p>
+    <p>
+      In the end, I found that my implementation was very simple and easy to extend compared to the system that I had to use at work. It changed my view that CQRS is not necessarily complex or hard to maintain as I had previously experienced and read online.
+    </p>
+    <p>
+      In the future I might extend this project to have more domain logic/features and also to handle more complex scenarios such as events that may arrive out of order. I may also experiment with different testing strategies for this system.
+    </p>
+
     <h1>Tic-Tac-Clojure; Experiments with AI</h1>
     <p>
       <a href="https://github.com/Jamie-Rodriguez/tic-tac-clojure">https://github.com/Jamie-Rodriguez/tic-tac-clojure</a>
@@ -51,15 +73,15 @@
     </p>
     <p>
       I created this for two reasons:
-      <ol>
-        <li>
-          To learn the <em>modern</em>, in-built Clojure development ecosystem, specifically using CLI + Deps with unit testing.
-        </li>
-        <li>
-          To use this engine/environment to experiment with reinforcement learning agents.
-        </li>
-      </ol>
     </p>
+    <ol>
+      <li>
+        To learn the <em>modern</em>, in-built Clojure development ecosystem, specifically using CLI + Deps with unit testing.
+      </li>
+      <li>
+        To use this engine/environment to experiment with reinforcement learning agents.
+      </li>
+    </ol>
     <p>
       I then created an AI agent that can play the game. It uses an algorithm called <em>Monte Carlo tree search</em> which, as the name describes, uses the Monte Carlo sampling technique to approximate and then search the game tree.
     </p>
@@ -80,7 +102,6 @@
     <p>
       I actually started first by implementing other monads that I already had a decent understanding of their behaviour - <em>Maybe</em> and <em>List</em>, which helped gain a solid general understanding of the monad pattern before applying it to the <em>IO</em> monad.
     </p>
-
 
     <h1>Adventures in Modern C Development: HTTP Server</h1>
     <p>
