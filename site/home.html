@@ -9,7 +9,6 @@
     <meta name="date" content="2021-12-12">
 
     <link rel="stylesheet" type="text/css" href="style.css">
-    <script src="header.js" type="text/javascript" defer></script>
     <style>
       p {
         text-align: center;
@@ -23,7 +22,15 @@
     <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-rune16x16.png">
   </head>
   <body>
-    <header-component></header-component>
+    <header>
+      <nav aria-label="Site Header">
+        <a href="/home">Home</a>
+        <a href="/projects">Projects</a>
+        <a href="/blog">Blog</a>
+        <a href="/contact">Contact</a>
+      </nav>
+      <hr/>
+    </header>
 
     <picture>
       <source type="image/avif" srcset="headshot400x400.avif">

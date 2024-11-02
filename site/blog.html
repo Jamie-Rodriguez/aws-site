@@ -9,7 +9,6 @@
     <meta name="date" content="2021-12-29">
 
     <link rel="stylesheet" type="text/css" href="style.css">
-    <script src="header.js" type="text/javascript" defer></script>
 
     <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="favicon/favicon-rune180x180.png">
     <link rel="icon" type="image/png" sizes="64x64" href="favicon/favicon-rune64x64.png">
@@ -18,7 +17,16 @@
     <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-rune16x16.png">
   </head>
   <body>
-    <header-component></header-component>
+    <header>
+      <nav aria-label="Site Header">
+        <a href="/home">Home</a>
+        <a href="/projects">Projects</a>
+        <a href="/blog">Blog</a>
+        <a href="/contact">Contact</a>
+      </nav>
+      <hr/>
+    </header>
+
     <ul>
       <li>
         <a href="blog/20211229">Pathfinding Using Depth-First Search</a>
