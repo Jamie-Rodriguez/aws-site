@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en-au">
+  <head>
+    <meta charset="utf-8">
+
+    <title>Jamie&rsquo;s Site | Cultivating Rigorous Code - Rooting out bugs in AVL trees with property-based testing</title>
+    <meta name="description" content="Jamie Rodríguez&rsquo;s website | Cultivating Rigorous Code - Rooting out bugs in AVL trees with property-based testing">
+    <meta name="author" content="Jamie Rodríguez">
+    <meta name="date" content="2024-11-02">
+
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <script src="../header.js" type="text/javascript" defer></script>
+
+    <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../favicon/favicon-rune180x180.png">
+    <link rel="icon" type="image/png" sizes="64x64" href="../favicon/favicon-rune64x64.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="../favicon/favicon-rune48x48.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../favicon/favicon-rune32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../favicon/favicon-rune16x16.png">
+  </head>
+  <body>
+    <header-component></header-component>
+    <article>
+      <time datetime="2024-11-02">2<sup>nd</sup> November, 2024</time>
+      <h1>Cultivating Rigorous Code</h1>
+      <p>
+        <em>
+          Rooting out bugs in AVL trees with property-based testing
+        </em>
+      </p>
+
+      <nav>
+        <h2 id="contents">Contents</h2>
+        <ol>
+          <li>
+            <a href="#background">Background</a>
+          </li>
+          <li>
+            <a href="#theory-of-property-based-testing">Theory of Property-Based Testing</a>
+          </li>
+          <li>
+            <a href="#the-code">The Code</a>
+          </li>
+          <li>
+            <a href="#conclusion">Conclusion</a>
+          </li>
+          <li>
+            <a href="#source">Source</a>
+          </li>
+          <li>
+            <a href="#footnotes">Footnotes</a>
+          </li>
+        </ol>
+      </nav>
+
+      <h2 id="background">Background</h2>
+      <p>
+        Recently, I was tasked with an interesting problem, and I found the way I solved the problem quite interesting and I thought it was worth sharing.
+      </p>
+      <p>
+        Without going into too much detail of the domain, I would be creating a specialised cache. I needed to be able to order the dataset, and also be able to retrieve relevant data or the closest datapoint quickly. A <em>balanced</em> binary search tree (BST) suited this usecase. After a bit of research, I found that AVL trees (named after inventors Georgy Adelson-Velsky &amp; Evgenii Landis) have slightly better read performance than Red-Black trees due to stricter balancing rules.<sup>[<a href="#avl-proof-uci" aria-describedby="avl-proof-uci">1</a>]</sup>
+      </p>
+      <p>
+        However, whilst I knew the general theory behind AVL trees, I had never implemented one myself before - and I knew enough about them to know that they are not simple! This raised the question “How can I be absolutely sure that my AVL tree implementation is <em>correct</em>?” (and related sub-question “<em>How can I prove to my team that my AVL tree is correct?</em>)”
+      </p>
+      <p>
+        Typically, most programmers write unit tests to give themselves confidence about their code. However with such a tricky/specific data structure, it’s possible that I might miss some test cases; and raises <em>another</em> question “How will I know that I’ve covered all test cases?” - clearly unit tests will not be sufficient for the degree of confidence I want in my code!
+      </p>
+      <p>
+        After some contemplation, it’s obvious that all of these questions emanate from the same cause - a need of provably thorough testing. After some research I came across a testing technique called <strong>property-based testing (PBT)</strong>.
+      </p>
+
+      <h2 id="theory-of-property-based-testing">Theory of Property-Based Testing</h2>
+      <p>
+        <em>Note: I’m not going to go into a lot of detail about the algorithms behind AVL trees here as there are already a large amount of in-depth resources available.</em>
+      </p>
+      <p>
+        I like to think of PBT as a <em>generalisation</em> of unit testing. That is, if we can say that unit tests validate that when a function is given a single concrete input, we can assert that it gives a specific predetermined output. Then we can say that property-based tests actually test <strong>all possible inputs</strong> and assert that certain properties always hold true. Compare testing a sample size of 1 versus testing the entire input-space! Can you already begin to see how much more powerful this is?
+      </p>
+      <p>
+        In order to do this, we need to generalise the behaviour of the function into what PBT calls <em>properties</em>. Simply put, these are things about the code that should always be true, no matter what the inputs to the function are. For my testing, I opted to define two properties for my AVL tree:
+      </p>
+      <dl>
+        <dt>AVL trees are binary-search trees</dt>
+  <dd>i.e. a binary tree where the key of a given node is greater than all the keys in the respective node’s left subtree. Similarly the keys in the right subtree are greater than the current node’s.</dd>
+        <dt>AVL trees are balanced binary trees</dt>
+  <dd>A balanced binary tree is a binary tree that keeps the minimum height possible at all times.</dd>
+      </dl>
+      <p>
+        Below is a quick example of an unbalanced versus a balanced binary tree:
+      </p>
+      <pre><code>
+  Unbalanced    Balanced
+
+      4            2
+     /            / \
+    3            1   3
+   /                  \
+  2                    4
+ /
+1
+      </code></pre>
+      <p>
+        Note how the balanced tree takes the smallest depth possible.
+      </p>
+
+      <h2 id="the-code">The Code</h2>
+      <p>
+        With the theory now out of the way, let’s get to coding.
+      </p>
+      <p>
+        I will include my implementation of the two properties<sup>[<a href="#properties-leetcode" aria-describedby="properties-leetcode">2</a>]</sup> for completeness, though they are not the main focus of the article:
+      </p>
+      <pre><code>
+ <span class="line-num">1</span> <span class="operator">const</span> <span class="function">isBinarySearchTree</span> <span class="operator">=</span> (tree, min <span class="init">=</span> <span class="operator">-</span><span class="value">Infinity</span>, max <span class="init">=</span> <span class="value">Infinity</span>) =&gt; {
+ <span class="line-num">2</span>     <span class="keyword">if</span> (<span class="operator">!</span>tree)
+ <span class="line-num">3</span>         <span class="keyword">return</span> <span class="value">true</span>
+ <span class="line-num">4</span>
+ <span class="line-num">5</span>     <span class="operator">const</span> { key, left, right } <span class="operator">=</span> tree
+ <span class="line-num">6</span>
+ <span class="line-num">7</span>     <span class="keyword">if</span> (<span class="operator">!</span>(min <span class="operator">&lt;</span> key <span class="operator">&amp;&amp;</span> key <span class="operator">&lt;</span> max))
+ <span class="line-num">8</span>         <span class="keyword">return</span> <span class="value">false</span>
+ <span class="line-num">9</span>
+<span class="line-num">10</span>     <span class="keyword">return</span> <span class="function">isBinarySearchTree</span>(left, min, key) <span class="operator">&amp;&amp;</span> <span class="function">isBinarySearchTree</span>(right, key, max)
+<span class="line-num">11</span> }
+<span class="line-num">12</span>
+<span class="line-num">13</span> <span class="operator">const</span> <span class="function">isBalancedBinaryTree</span> <span class="operator">=</span> <span class="init">tree</span> =&gt; {
+<span class="line-num">14</span>     <span class="operator">const</span> <span class="function">checkBalance</span> <span class="operator">=</span> <span class="init">node</span> =&gt; {
+<span class="line-num">15</span>         <span class="keyword">if</span> (<span class="operator">!</span>node)
+<span class="line-num">16</span>             <span class="keyword">return</span> [<span class="value">true</span>, <span class="value">0</span>]
+<span class="line-num">17</span>
+<span class="line-num">18</span>         <span class="operator">const</span> { <span class="init">left</span>, <span class="init">right</span> } <span class="operator">=</span> node
+<span class="line-num">19</span>
+<span class="line-num">20</span>         <span class="operator">const</span> [leftBalanced, leftHeight] <span class="operator">=</span> <span class="function">checkBalance</span>(left)
+<span class="line-num">21</span>         <span class="operator">const</span> [rightBalanced, rightHeight] <span class="operator">=</span> <span class="function">checkBalance</span>(right)
+<span class="line-num">22</span>
+<span class="line-num">23</span>         <span class="operator">const</span> balanced <span class="operator">=</span> leftBalanced
+<span class="line-num">24</span>                          <span class="operator">&amp;&amp;</span> rightBalanced
+<span class="line-num">25</span>                          <span class="operator">&amp;&amp;</span> <span class="import">Math</span>.<span class="function">abs</span>(leftHeight <span class="operator">-</span> rightHeight) <span class="operator">&lt;=</span> <span class="value">1</span>
+<span class="line-num">26</span>         <span class="operator">const</span> height <span class="operator">=</span> <span class="value">1</span> <span class="operator">+</span> <span class="import">Math</span>.<span class="function">max</span>(leftHeight, rightHeight)
+<span class="line-num">27</span>
+<span class="line-num">28</span>         <span class="keyword">return</span> [balanced, height]
+<span class="line-num">29</span>     }
+<span class="line-num">30</span>
+<span class="line-num">31</span>     <span class="keyword">return</span> <span class="function">checkBalance</span>(tree)[<span class="value">0</span>]
+<span class="line-num">32</span> }
+      </code></pre>
+      <p>
+        These properties just need to return either <code>true</code> or <code>false</code> to indicate if the property holds true, or was violated. With these properties defined, we can now write our property-based tests!
+      </p>
+      <p>
+        I opted to use the JavaScript library <a href="https://fast-check.dev/" target="_blank" rel="noopener noreferrer">fast-check</a> to do my property-based testing. Below are my (property-based) tests for the <em>insertion</em> operation of the AVL tree. (I implemented testing for node removal also, but omitted here for brevity. <a href="#source" aria-describedby="source">See links at the end for full source code</a>)
+      </p>
+      <pre><code>
+ <span class="line-num">1</span> <span class="value">import</span> <span class="import">fc</span> <span class="value">from</span> <span class="string">'fast-check'</span>
+ <span class="line-num">2</span> <span class="value">import</span> { <span class="import">isBinarySearchTree</span> } <span class="value">from</span> <span class="string">'./binary-search-tree.test.js'</span>
+ <span class="line-num">3</span> <span class="value">import</span> { <span class="import">search</span> } <span class="value">from</span> <span class="string">'./binary-search-tree.js'</span>
+ <span class="line-num">4</span> <span class="value">import</span> { <span class="import">insert</span>, <span class="import">remove</span> } <span class="value">from</span> <span class="string">'./avl-tree.js'</span>
+ <span class="line-num">5</span>
+ <span class="line-num">6</span> <span class="line-num">// *snip*: previously-shown property isBalancedBinaryTree()</span>
+ <span class="line-num">7</span>
+ <span class="line-num">8</span> <span class="function">describe</span>(<span class="string">'AVL tree'</span>, () =&gt; {
+ <span class="line-num">9</span>     <span class="function">describe</span>(<span class="string">'insertion'</span>, () =&gt; {
+<span class="line-num">10</span>         <span class="function">it</span>(<span class="string">'constructs valid binary search tree'</span>, () =&gt; {
+<span class="line-num">11</span>             <span class="import">fc</span>.<span class="function">assert</span>(<span class="import">fc</span>.<span class="function">property</span>(<span class="import">fc</span>.<span class="function">array</span>(<span class="import">fc</span>.<span class="function">integer</span>()),
+<span class="line-num">12</span>                 nums =&gt; {
+<span class="line-num">13</span>                     <span class="operator">const</span> tree = nums.<span class="function">reduce</span>(<span class="function">insert</span>, <span class="string">null</span>)
+<span class="line-num">14</span>
+<span class="line-num">15</span>                     <span class="keyword">return</span> <span class="function">isBinarySearchTree</span>(tree)
+<span class="line-num">16</span>                 })
+<span class="line-num">17</span>             )
+<span class="line-num">18</span>         })
+<span class="line-num">19</span>
+<span class="line-num">20</span>         <span class="function">it</span>(<span class="string">'constructs balanced binary tree'</span>, () =&gt; {
+<span class="line-num">21</span>             <span class="import">fc</span>.<span class="function">assert</span>(<span class="import">fc</span>.<span class="function">property</span>(<span class="import">fc</span>.<span class="function">array</span>(<span class="import">fc</span>.<span class="function">integer</span>()),
+<span class="line-num">22</span>                 nums =&gt; {
+<span class="line-num">23</span>                     <span class="operator">const</span> tree = nums.<span class="function">reduce</span>(<span class="function">insert</span>, <span class="string">null</span>)
+<span class="line-num">24</span>
+<span class="line-num">25</span>                     <span class="keyword">return</span> <span class="function">isBalancedBinaryTree</span>(tree)
+<span class="line-num">26</span>                 })
+<span class="line-num">27</span>             )
+<span class="line-num">28</span>         })
+<span class="line-num">29</span>
+<span class="line-num">30</span>         <span class="function">it</span>(<span class="string">'adds element to tree'</span>, () =&gt; {
+<span class="line-num">31</span>             <span class="import">fc</span>.<span class="function">assert</span>(<span class="import">fc</span>.<span class="function">property</span>(<span class="import">fc</span>.<span class="function">array</span>(<span class="import">fc</span>.<span class="function">integer</span>()),
+<span class="line-num">32</span>                 nums =&gt; {
+<span class="line-num">33</span>                     <span class="operator">const</span> tree = nums.<span class="function">reduce</span>(<span class="function">insert</span>, <span class="string">null</span>)
+<span class="line-num">34</span>
+<span class="line-num">35</span>                     <span class="keyword">return</span> nums.<span class="function">map</span>(n =&gt; <span class="function">search</span>(tree, n))
+<span class="line-num">36</span>                                .<span class="function">every</span>(result => <span class="operator">!!</span>result <span class="operator">||</span> result <span class="operator">===</span> <span class="value">0</span>)
+<span class="line-num">37</span>                 })
+<span class="line-num">38</span>             )
+<span class="line-num">39</span>         })
+<span class="line-num">40</span>     })
+<span class="line-num">41</span>
+<span class="line-num">42</span>     <span class="function">describe</span>(<span class="string">'removal'</span>, () => { <span class="line-num">/* left as an exercise for the reader... */</span> })
+<span class="line-num">43</span> })
+      </code></pre>
+      <p>
+        The first thing to note is the function <code>fc.assert(fc.property(...))</code>, which as you may guess asserts that the property holds true for all possible inputs.
+      </p>
+      <p>
+        The next part is that we need to specify what kind of inputs to generate for the tests. In this case, the AVL tree simply holds integer values, so I generated an array of ints to insert into the tree with <code>fc.array(fc.integer())</code>. Notice here how I’m not defining any <em>specific</em> integer values, or even <em>how many</em> values to insert; but rather letting the PBT library generate a <em>random number of random values</em> for me. Under the hood, the library uses an intelligent search algorithm to generate a large number of targeted pseudorandom test cases; trying it’s best to find interesting test cases to fail our test(s).
+      </p>
+      <p>
+        Next we provide our actual test function, which takes the array of ints I just specified, denoted as <code>nums</code>. We then insert each of these numbers into the tree, and then check if the property under test holds true for the resulting tree.
+      </p>
+      <p>
+        The astute observers among you may notice that the first two tests actually have the same structure; the only difference is the testing of different properties. You may be asking “But why couldn’t we just write a single test that tests both properties (e.g. <code>return isBinarySearchTree(tree) && isBalancedBinaryTree(tree)</code>)?” The answer is that we certainly <em>could</em>, but it’s generally better to keep tests as granular as possible. This way if a test fails, we can quickly identify which property is failing, and thus the root cause of the failure, leading to faster debugging.
+      </p>
+      <p>
+        The final insertion test simply checks that after inserting the integers into the tree, we can search for each of the inserted values and retrieve them from the tree. I put this in as more of a sanity-check to make sure something strange possibly not covered by the first two properties isn’t happening. For example, adding one to each key before insertion would still pass the BST and balanced binary tree properties, though does not contain the keys we wanted to insert!
+      </p>
+
+      <h2 id="conclusion">Conclusion</h2>
+      <p>
+        So why is this so powerful? This is because now that we have generalised our tests, the PBT library can then generate <em>hundreds of thousands</em> of test cases<sup>[<a href="#num-tests" aria-describedby="num-tests">3</a>]</sup>, trying it’s best to find and explore interesting inputs that may invalidate our properties in a targeted search. This is very powerful as I think I would struggle to come up with all units tests required to cover all edge cases of building an AVL tree; whilst our PBT library will happily try to think up strange/interesting trees for us. Also of note is the amount of test-code that would have to otherwise be written for all edge cases if unit-testing! You could say that because the PBT approach is much more succinct, it is a lot less prone to error.
+      </p>
+      <p>
+        And there you have it, with that small amount of code, I was able to create an extremely powerful and comprehensive set of tests that verify the correctness of my AVL tree implementation. This is the power of property-based testing!
+      </p>
+
+      <h2 id="source">Source</h2>
+      <p>
+        The full source of the test-code from the article can be seen here on my GitHub: <a href="https://github.com/Jamie-Rodriguez/data-structs-and-algos/blob/master/avl-tree.test.js" target="_blank" rel="noopener noreferrer">https://github.com/Jamie-Rodriguez/data-structs-and-algos/blob/master/avl-tree.test.js</a>. And if you are curious, the implementation of the AVL tree can be seen here <a href="https://github.com/Jamie-Rodriguez/data-structs-and-algos/blob/master/avl-tree.js" target="_blank" rel="noopener noreferrer">https://github.com/Jamie-Rodriguez/data-structs-and-algos/blob/master/avl-tree.js</a>.
+      </p>
+
+      <h2 id="footnotes">Footnotes</h2>
+      <dl>
+        <dt id="avl-proof-uci">[1]</dt>
+        <dd>A thorough proof of the maximum heights of AVL trees from the University of California, Irvine can be seen at <a href="https://ics.uci.edu/~pattis/ICS-23/lectures/notes/AVL.txt" target="_blank" rel="noopener noreferrer">https://ics.uci.edu/~pattis/ICS-23/lectures/notes/AVL.txt</a></dd>
+
+        <dt id="properties-leetcode">[2]</dt>
+        <dd>You can have a go at writing these properties yourself with <a href="https://leetcode.com/problems/validate-binary-search-tree/description/" target="_blank" rel="noopener noreferrer">Leetcode 98. Validate Binary Search Tree</a> and <a href="https://leetcode.com/problems/balanced-binary-tree/description/" target="_blank" rel="noopener noreferrer">Leetcode 110. Balanced Binary Tree</a></dd>
+
+        <dt id="num-tests">[3]</dt>
+        <dd>This can be configured to run an even larger number of tests if you so wish.</dd>
+      </dl>
+    </article>
+  </body>
+</html>
