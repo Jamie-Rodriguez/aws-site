@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8">
 
-    <title>Jamie&rsquo;s Site | Pathfinding Using Depth-First Search</title>
-    <meta name="description" content="Jamie Rodríguez&rsquo;s website | Pathfinding Using Depth-First Search">
+    <title>Jamie’s Site | Pathfinding Using Depth-First Search</title>
+    <meta name="description" content="Jamie Rodríguez’s website | Pathfinding Using Depth-First Search">
     <meta name="author" content="Jamie Rodríguez">
     <meta name="date" content="2021-12-29">
 
@@ -57,13 +57,13 @@
 
       <h2 id="background">Background</h2>
       <p>
-        Recently I went through the interview process for a &ldquo;<em>FAANG</em>/<em>MAANG</em>/<em>MANGA</em>/<em>whatever they call them these days</em>&rdquo; company. I managed to get all the way through the numerous interviews - to the very end, but didn&rsquo;t end up receiving an offer.
+        Recently I went through the interview process for a “<em>FAANG</em>/<em>MAANG</em>/<em>MANGA</em>/<em>whatever they call them these days</em>” company. I managed to get all the way through the numerous interviews - to the very end, but didn’t end up receiving an offer.
       </p>
       <p>
-        As you don&rsquo;t get feedback after the process it&rsquo;s hard to know for sure; but I did have trouble with one technical question in the final set of technical interviews which I believe was what cost me the opportunity. Reflecting upon it in retrospective I had devised the right algorithm to solve the problem - I just didn&rsquo;t have enough time to finish the implementation.
+        As you don’t get feedback after the process it’s hard to know for sure; but I did have trouble with one technical question in the final set of technical interviews which I believe was what cost me the opportunity. Reflecting upon it in retrospective I had devised the right algorithm to solve the problem - I just didn’t have enough time to finish the implementation.
       </p>
       <p>
-        I think this question is interesting and unique enough to write a blog post about because I actually didn&rsquo;t find much information about this <em>specific</em> problem on the internet when trying to check if I had the right solution afterward. I hope it may help some people out.
+        I think this question is interesting and unique enough to write a blog post about because I actually didn’t find much information about this <em>specific</em> problem on the internet when trying to check if I had the right solution afterward. I hope it may help some people out.
       </p>
 
       <h2 id="the-question">The Question</h2>
@@ -96,7 +96,7 @@
       </table>
 
       <p>
-        I later found out that this problem already exists, it&rsquo;s called the <em>lowest common ancestor</em> (<abbr title="lowest common ancestor">LCA</abbr>) problem. Solutions to this on the internet are abundant for <em>binary</em> trees, however there are not so many for the <strong>non-binary</strong> tree case!
+        I later found out that this problem already exists, it’s called the <em>lowest common ancestor</em> (<abbr title="lowest common ancestor">LCA</abbr>) problem. Solutions to this on the internet are abundant for <em>binary</em> trees, however there are not so many for the <strong>non-binary</strong> tree case!
       </p>
 
       <h2 id="high-level-design">High-Level Algorithm Design</h2>
@@ -124,7 +124,7 @@
         We can make the assumption that the two nodes exist in the same tree. Therefore we can guarantee that the the two paths will have at least one node match - the root node.
       </p>
       <p>
-        Okay so now you&rsquo;re probably thinking <q>But Jamie, what is that function <code>pathFromRootToNode()</code>? How do you find the path to the node?</q> Well dear reader, allow me to introduce you to a powerful tool in any practical programmer&rsquo;s arsenal; <em>depth-first search (<abbr title="depth-first search">DFS</abbr>)</em>.
+        Okay so now you’re probably thinking <q>But Jamie, what is that function <code>pathFromRootToNode()</code>? How do you find the path to the node?</q> Well dear reader, allow me to introduce you to a powerful tool in any practical programmer’s arsenal; <em>depth-first search (<abbr title="depth-first search">DFS</abbr>)</em>.
       </p>
       <p>
         <em><strong>Note</strong>: Although <abbr title="depth-first search">DFS</abbr> is guaranteed to find the shortest path between two nodes in a tree, this <strong>cannot</strong> be guaranteed for graphs! For graphs I recommend looking into breadth-first search (<abbr title="breadth-first search">BFS</abbr>).</em>
@@ -132,7 +132,7 @@
 
       <h2 id="depth-first-search">Depth-First Search</h2>
       <p>
-        I won&rsquo;t be going into <abbr title="depth-first search">DFS</abbr> in much <em>depth</em> (haha) as there already exist other resources that do a good job of explaining the algorithm. I recommend:
+        I won’t be going into <abbr title="depth-first search">DFS</abbr> in much <em>depth</em> (haha) as there already exist other resources that do a good job of explaining the algorithm. I recommend:
       </p>
       <ul>
         <li>
@@ -146,11 +146,11 @@
       </ul>
 
       <p>
-        However it&rsquo;s still important to know the general pattern of <abbr title="depth-first search">DFS</abbr>. To describe it informally, we get the child nodes of the current node and pick one child node. We then go to the chosen child node and repeat this process of getting it&rsquo;s child node. This has the result of traversing the tree by going as far <em>down</em> the tree as possible, then returning back up to the previous node, repeating the process for the next child. This is how the algorithm gets the name <em>depth-first search</em>.
+        However it’s still important to know the general pattern of <abbr title="depth-first search">DFS</abbr>. To describe it informally, we get the child nodes of the current node and pick one child node. We then go to the chosen child node and repeat this process of getting it’s child node. This has the result of traversing the tree by going as far <em>down</em> the tree as possible, then returning back up to the previous node, repeating the process for the next child. This is how the algorithm gets the name <em>depth-first search</em>.
       </p>
 
       <p>
-        I&rsquo;ve illustrated the &ldquo;path&rdquo; that <abbr title="depth-first search">DFS</abbr> takes exploring an example tree.
+        I’ve illustrated the “path” that <abbr title="depth-first search">DFS</abbr> takes exploring an example tree.
       </p>
       <object data="20211229/dfs.svg" type="image/svg+xml" width="80%"></object>
 
@@ -159,11 +159,11 @@
       </p>
 
       <p>
-        Okay, let&rsquo;s use <abbr title="depth-first search">DFS</abbr> to record the path from the root to a arbitrary node!
+        Okay, let’s use <abbr title="depth-first search">DFS</abbr> to record the path from the root to a arbitrary node!
       </p>
 
       <p>
-        There are actually two ways to implement <abbr title="depth-first search">DFS</abbr>; iteratively and recursively. There are not really advantages/disadvantages of either approach, it&rsquo;s more a matter of preference - the recursive approach is a little more succinct however.
+        There are actually two ways to implement <abbr title="depth-first search">DFS</abbr>; iteratively and recursively. There are not really advantages/disadvantages of either approach, it’s more a matter of preference - the recursive approach is a little more succinct however.
       </p>
 
       <p>
@@ -213,7 +213,7 @@
       </code></pre>
 
       <p>
-        The most important lines to examine are <code>6</code>-<code>9</code>, if we don&rsquo;t find the target node, search deeper in the tree.
+        The most important lines to examine are <code>6</code>-<code>9</code>, if we don’t find the target node, search deeper in the tree.
       </p>
 
       <p>
@@ -230,11 +230,11 @@
       </p>
 
       <p>
-        Although I came up with this notation myself, I&rsquo;m sure it has been thought of before, if you&rsquo;ve seen it previously, please let me know.
+        Although I came up with this notation myself, I’m sure it has been thought of before, if you’ve seen it previously, please let me know.
       </p>
 
       <p>
-        What I do is visualise the stack frames produced during the algorithm&rsquo;s runtime. I usually go through this manually and sketch it out on a piece of paper.
+        What I do is visualise the stack frames produced during the algorithm’s runtime. I usually go through this manually and sketch it out on a piece of paper.
       </p>
 
       <p>
@@ -268,7 +268,7 @@
       </code></pre>
 
       <p>
-        I&rsquo;ve renamed <code>pathFromRootToNode()</code> to <code>dfs()</code> for the purposes of illustrating where our concrete implementation fits in, but I personally think that <code>pathFromRootToNode()</code> is a more descriptive name that actually tells you what the function is doing.
+        I’ve renamed <code>pathFromRootToNode()</code> to <code>dfs()</code> for the purposes of illustrating where our concrete implementation fits in, but I personally think that <code>pathFromRootToNode()</code> is a more descriptive name that actually tells you what the function is doing.
       </p>
 
       <h2 id="time-complexity-analysis">Time Complexity Analysis</h2>
@@ -280,15 +280,15 @@
       </p>
 
       <p>
-        After we have the paths to each of the two nodes, in lines <code>10</code>-<code>12</code> we are simply iterating through one of the paths and cross-checking with the other in order to find at what node the paths stop being equal. At that point, we return the previous node and we have finally found the lowest common ancestor! &#127881;
+        After we have the paths to each of the two nodes, in lines <code>10</code>-<code>12</code> we are simply iterating through one of the paths and cross-checking with the other in order to find at what node the paths stop being equal. At that point, we return the previous node and we have finally found the lowest common ancestor! 🎉
       </p>
 
       <p>
-        It should be easy to see that the time complexity of that search will be <span class="math">O(D)</span>, where <span class="math">D</span> = depth of the tree. Having a path be a leaf-node - the deepest possible depth is an upper bound on the size of the runtime and it&rsquo;s also obvious that the run-time will increase linearly with the increase in size of the path.
+        It should be easy to see that the time complexity of that search will be <span class="math">O(D)</span>, where <span class="math">D</span> = depth of the tree. Having a path be a leaf-node - the deepest possible depth is an upper bound on the size of the runtime and it’s also obvious that the run-time will increase linearly with the increase in size of the path.
       </p>
 
       <p>
-        To sum the two algorithms together, let&rsquo;s imagine a worst-case scenario; a tree that is just a linear list of nodes:
+        To sum the two algorithms together, let’s imagine a worst-case scenario; a tree that is just a linear list of nodes:
       </p>
 
       <pre><code>
@@ -311,7 +311,7 @@
         For the second part (lines <code>6</code>-<code>15</code>) of the <code>lca()</code> function, we will have to traverse all of <code>pathC</code> to discover that it is a subset of <code>pathD</code>. The runtime to find the last node is therefore <span class="math">O(n-1) = O(n)</span>.
       </p>
       <p>
-        Adding the runtime of the two <abbr title="depth-first search">DFS</abbr>&rsquo;es and the search for the last common node, we get <span class="math">O(3n) = O(n)</span>! &#127881;
+        Adding the runtime of the two <abbr title="depth-first search">DFS</abbr>’es and the search for the last common node, we get <span class="math">O(3n) = O(n)</span>! 🎉
       </p>
     </article>
   </body>
